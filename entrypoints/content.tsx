@@ -40,14 +40,30 @@ export default defineContentScript({
   async main(ctx) {
     console.log("content.ts initialized", ctx);
 
-    ctx.addEventListener(window, "wxt:locationchange", async ({ newUrl }) => {
-      if (!uiRef && checkIfWeCanInjectUI(newUrl.toString())) {
-        await mountShadowRootUi(ctx);
-      }
+    const zenModeStatus = await storage.getItem("local:zen-mode-status", {
+      fallback: "not-activated",
     });
 
-    if (checkIfWeCanInjectUI(window.location.href)) {
-      await mountShadowRootUi(ctx);
+    if (zenModeStatus === "activated") {
+      document.documentElement.style.setProperty(
+        "--zen-mode-status",
+        "activated",
+      );
+
+      ctx.addEventListener(window, "wxt:locationchange", async ({ newUrl }) => {
+        if (!uiRef && checkIfWeCanInjectUI(newUrl.toString())) {
+          await mountShadowRootUi(ctx);
+        }
+      });
+
+      if (checkIfWeCanInjectUI(window.location.href)) {
+        await mountShadowRootUi(ctx);
+      }
+    } else {
+      document.documentElement.style.setProperty(
+        "--zen-mode-status",
+        "not-activated",
+      );
     }
   },
 });
