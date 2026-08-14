@@ -10,7 +10,7 @@ export default defineConfig({
   manifest: {
     name: "YoutubeZen",
     description: "YoutubeZen is an extension to remove distractions.",
-    version: "0.0.1",
+    version: "0.1.0",
     permissions: ["storage", "tabs"],
   },
 
